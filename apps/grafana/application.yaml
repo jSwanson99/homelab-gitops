@@ -5,13 +5,17 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://grafana.github.io/helm-charts
-    chart: grafana
-    targetRevision: 6.50.7
-    helm:
-      valueFiles:
-        - values.yaml
+  sources:
+    - repoURL: https://grafana.github.io/helm-charts
+      chart: grafana
+      targetRevision: 6.50.7
+      helm:
+        valueFiles:
+          - $values
+    - repoURL: https://github.com/jSwanson99/homelab-gitops.git
+      targetRevision: master
+      path: apps/grafana
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
