@@ -1,3 +1,4 @@
+apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: grafana
@@ -8,16 +9,20 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   sources:
+
   - chart: grafana
-    helm:
-      valueFiles:
-      - null
     repoURL: https://grafana.github.io/helm-charts
     targetRevision: 8.9.0
-  - path: apps/grafana
-    ref: values
-    repoURL: https://github.com/jSwanson99/homelab-gitops.git
-    targetRevision: master
+    helm:
+      values: |
+        service:
+          type: LoadBalancer
+
+#  - path: apps/grafana
+#    ref: values
+#    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+#    targetRevision: master
+
   syncPolicy:
     automated:
       prune: true
