@@ -12,17 +12,17 @@ spec:
     - chart: opentelemetry-collector
       repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
       targetRevision: 0.79.0
-    helm:
-      valueFiles:
-        - $values/apps/otelcol-contrib/values.yaml
+      helm:
+        valueFiles:
+          - $values/apps/otelcol-contrib/values.yaml
 
-  - path: apps/otelcol-contrib
-    ref: values
-    repoURL: https://github.com/jSwanson99/homelab-gitops.git
-    targetRevision: master
+    - path: apps/otelcol-contrib
+      ref: values
+      repoURL: https://github.com/jSwanson99/homelab-gitops.git
+      targetRevision: master
   syncPolicy:
     automated:
       prune: true
-      selfHeal: true
+    selfHeal: true
     syncOptions:
       - CreateNamespace=true
