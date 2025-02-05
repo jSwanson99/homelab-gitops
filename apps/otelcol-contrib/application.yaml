@@ -14,48 +14,48 @@ spec:
       targetRevision: 0.79.0
       helm:
         values: |
-        mode: daemonset 
-
-        service:
-          enabled: true
-          type: LoadBalancer
-
-        presets:
-          logsCollection:
-            enabled: true
-            includeCollectorLogs: true
-        kubernetesAttributes:
-          enabled: true
-        kubeletMetrics:
-          enabled: true
-        clusterMetrics:
-          enabled: true
-        kubernetesEvents:
-          enabled: true
-
-        image:
-          repository: otel/opentelemetry-collector-contrib
-          tag: 0.79.0
-
-        config:
-          receivers:
-            otlp:
-              protocols:
-                grpc:
-                  endpoint: 0.0.0.0:4317
-
-          processors:
-            batch:
-              timeout: 10s
+          mode: daemonset 
 
           service:
-            pipelines:
-              traces:
-                receivers: [otlp]
-                processors: [batch]
-              metrics:
-                receivers: [otlp]
-                processors: [batch]
+            enabled: true
+            type: LoadBalancer
+
+          presets:
+            logsCollection:
+              enabled: true
+              includeCollectorLogs: true
+          kubernetesAttributes:
+            enabled: true
+          kubeletMetrics:
+            enabled: true
+          clusterMetrics:
+            enabled: true
+          kubernetesEvents:
+            enabled: true
+
+          image:
+            repository: otel/opentelemetry-collector-contrib
+            tag: 0.79.0
+
+          config:
+            receivers:
+              otlp:
+                protocols:
+                  grpc:
+                    endpoint: 0.0.0.0:4317
+
+            processors:
+              batch:
+                timeout: 10s
+
+            service:
+              pipelines:
+                traces:
+                  receivers: [otlp]
+                  processors: [batch]
+                metrics:
+                  receivers: [otlp]
+                  processors: [batch]
 
   syncPolicy:
     automated:
