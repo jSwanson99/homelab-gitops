@@ -1,3 +1,8 @@
+replicas: 1
+
+autoscaling:
+  enabled: false
+
 service:
   enabled: true
   type: LoadBalancer
@@ -12,13 +17,3 @@ persistence:
   type: pvc
   enabled: true
   size: 10Gi
-
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Prometheus
-        type: prometheus
-        url: http://prometheus-prometheus-server
-        access: proxy
-        isDefault: true
