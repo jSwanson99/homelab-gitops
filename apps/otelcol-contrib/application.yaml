@@ -9,27 +9,41 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   sources:
-  - chart: opentelemetry-collector
-    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
-    targetRevision: 0.79.0
-    helm:
-      values:
-        mode: daemonset 
+    - chart: opentelemetry-collector
+      repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+      targetRevision: 0.79.0
+      helm:
+        values: |
+          mode: daemonset 
+
+        presets:
+          logsCollection:
+            enabled: true
+            includeCollectorLogs: true
+        kubernetesAttributes:
+          enabled: true
+        kubeletMetrics:
+          enabled: true
+        clusterMetrics:
+          enabled: true
+        kubernetesEvents:
+          enabled: true
+
         image:
           repository: otel/opentelemetry-collector-contrib
           tag: 0.79.0
-        
+
         config:
           receivers:
             otlp:
               protocols:
                 grpc:
                   endpoint: 0.0.0.0:4317
-          
+
           processors:
             batch:
               timeout: 10s
-          
+
           service:
             pipelines:
               traces:
@@ -44,4 +58,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true
