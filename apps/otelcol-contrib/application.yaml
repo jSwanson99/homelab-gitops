@@ -16,14 +16,10 @@ spec:
         values: |
           mode: daemonset 
 
-          service:
-            enabled: true
-            type: LoadBalancer
-
           presets:
             logsCollection:
               enabled: true
-              includeCollectorLogs: true
+              includeCollectorLogs: false
 
           image:
             repository: otel/opentelemetry-collector-contrib
@@ -40,17 +36,24 @@ spec:
               batch:
                 timeout: 10s
 
+            exporters:
+              logging:
+                verbosity: detailed
+
             service:
               pipelines:
                 traces:
                   receivers: [otlp]
                   processors: [batch]
+                  exporters: [logging]
                 metrics:
                   receivers: [otlp]
+                  exporters: [logging]
                   processors: [batch]
                 logs:
                   receivers: [otlp]
                   processors: [batch]
+                  exporters: [logging]
 
   syncPolicy:
     automated:
