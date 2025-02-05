@@ -18,10 +18,10 @@ spec:
         service:
           type: LoadBalancer
 
-#  - path: apps/grafana
-#    ref: values
-#    repoURL: https://github.com/jSwanson99/homelab-gitops.git
-#    targetRevision: master
+  - path: apps/grafana
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
 
   syncPolicy:
     automated:
