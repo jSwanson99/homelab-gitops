@@ -12,49 +12,14 @@ spec:
     - chart: opentelemetry-collector
       repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
       targetRevision: 0.79.0
-      helm:
-        values: |
-          mode: daemonset 
+    helm:
+      valueFiles:
+        - $values/apps/otelcol-contrib/values.yaml
 
-          presets:
-            logsCollection:
-              enabled: true
-              includeCollectorLogs: false
-
-          image:
-            repository: otel/opentelemetry-collector-contrib
-            tag: 0.79.0
-
-          config:
-            receivers:
-              otlp:
-                protocols:
-                  grpc:
-                    endpoint: 0.0.0.0:4317
-
-            processors:
-              batch:
-                timeout: 10s
-
-            exporters:
-              logging:
-                verbosity: detailed
-
-            service:
-              pipelines:
-                traces:
-                  receivers: [otlp]
-                  processors: [batch]
-                  exporters: [logging]
-                metrics:
-                  receivers: [otlp]
-                  exporters: [logging]
-                  processors: [batch]
-                logs:
-                  receivers: [otlp]
-                  processors: [batch]
-                  exporters: [logging]
-
+  - path: apps/otelcol-contrib
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
