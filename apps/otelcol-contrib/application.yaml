@@ -24,14 +24,6 @@ spec:
             logsCollection:
               enabled: true
               includeCollectorLogs: true
-          kubernetesAttributes:
-            enabled: true
-          kubeletMetrics:
-            enabled: true
-          clusterMetrics:
-            enabled: true
-          kubernetesEvents:
-            enabled: true
 
           image:
             repository: otel/opentelemetry-collector-contrib
@@ -54,6 +46,9 @@ spec:
                   receivers: [otlp]
                   processors: [batch]
                 metrics:
+                  receivers: [otlp]
+                  processors: [batch]
+                logs:
                   receivers: [otlp]
                   processors: [batch]
 
