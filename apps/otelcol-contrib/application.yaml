@@ -9,20 +9,19 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   sources:
-    - chart: opentelemetry-collector
-      repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
-      targetRevision: 0.115.0
-      helm:
-        valueFiles:
-          - $values/apps/otelcol-contrib/values.yaml
-
-    - path: apps/otelcol-contrib
-      ref: values
-      repoURL: https://github.com/jSwanson99/homelab-gitops.git
-      targetRevision: master
+  - chart: opentelemetry-collector
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: 0.115.0
+    helm:
+      valueFiles:
+        - $values/apps/otelcol-contrib/values.yaml
+  - path: apps/otelcol-contrib
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
     selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
