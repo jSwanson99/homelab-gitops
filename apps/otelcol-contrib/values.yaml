@@ -4,8 +4,8 @@ presets:
     enabled: true
     includeCollectorLogs: false
 image:
-  repository: otel/opentelemetry-collector-contrib
-  tag: 0.79.0
+  repository: otel/opentelemetry-collector-k8s
+  tag: 0.116.0
 config:
   receivers:
     otlp:
