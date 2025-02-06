@@ -4,10 +4,10 @@ metadata:
   name: otel-collector
   namespace: argocd
 spec:
+  project: default
   destination:
     namespace: monitoring
     server: https://kubernetes.default.svc
-  project: default
   sources:
   - chart: opentelemetry-collector
     repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts

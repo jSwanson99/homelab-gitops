@@ -1,11 +1,18 @@
 mode: daemonset
+image:
+  repository: 'otel/opentelemetry-collector-k8s'
+
 presets:
+  kubernetesAttributes:
+    enabled: true
   logsCollection:
     enabled: true
     includeCollectorLogs: false
-image:
-  repository: otel/opentelemetry-collector-k8s
-  tag: 0.116.0
+  hostMetrics:
+    enabled: true
+  kubeletMetrics:
+    enabled: true
+
 config:
   receivers:
     otlp:
@@ -13,8 +20,7 @@ config:
         grpc:
           endpoint: 0.0.0.0:4317
   exporters:
-    logging:
-      verbosity: detailed
+    debug: {}
   processors:
     batch:
       timeout: 10s
@@ -23,12 +29,12 @@ config:
       traces:
         receivers: [otlp]
         processors: [batch]
-        exporters: [logging]
+        exporters: [debug]
       metrics:
         receivers: [otlp]
         processors: [batch]
-        exporters: [logging]
+        exporters: [debug]
       logs:
         receivers: [otlp]
         processors: [batch]
-        exporters: [logging]
+        exporters: [debug]
