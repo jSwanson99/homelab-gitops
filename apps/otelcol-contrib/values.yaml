@@ -11,7 +11,7 @@ presets:
   hostMetrics:
     enabled: true
   kubeletMetrics:
-    enabled: true
+    enabled: false
 
 config:
   receivers:
