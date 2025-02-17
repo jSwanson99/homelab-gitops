@@ -13,7 +13,7 @@ service:
 adminUser: admin
 adminPassword: admin
 
-#persistence:
-#  type: pvc
-#  enabled: true
-#  size: 10Gi
+persistence:
+  type: pvc
+  enabled: true
+  size: 10Gi
