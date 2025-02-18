@@ -14,7 +14,16 @@ adminUser: admin
 adminPassword: admin
 
 persistence:
-  type: pvc
   enabled: true
-  size: 10Gi
   existingClaim: grafana-pvc
+  
+initChownData:
+  enabled: true
+  securityContext:
+    runAsUser: 472
+    runAsGroup: 472
+
+securityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  fsGroup: 472
