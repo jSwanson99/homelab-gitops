@@ -4,8 +4,8 @@ global:
 
 image:
   registry: docker.io
-  repository: clickhouse/clickhouse-server
-  tag: 25.1.6
+  repository: bitnami/clickhouse
+  tag: 25.1.6  # Match the APP VERSION for 8.0.4
   pullPolicy: IfNotPresent
 
 replicaCount: 1
