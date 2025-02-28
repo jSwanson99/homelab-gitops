@@ -20,6 +20,13 @@ spec:
         ports:
         - containerPort: 9000
         - containerPort: 8123
+      volumeMounts:
+      - name: clickhouse-data
+        mountPath: /var/lib/clickhouse
+    volumes:
+      - name: clickhouse-data
+        persistentVolumeClaim:
+          claimName: clickhouse-pvc
 ---
 apiVersion: v1
 kind: Service
