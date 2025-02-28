@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clickhouse
+  namespace: argocd
+spec:
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+  - chart: clickhouse
+    repoURL: https://charts.bitnami.com/bitnami
+    targetRevision: 8.0.4
+    helm:
+      valueFiles:
+        - $values/apps/clickhouse/values.yaml
+  - path: apps/clickhouse
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  syncOptions:
+    - CreateNamespace=true
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: clickhouse-pv
+  namespace: monitoring
+spec:
+  capacity:
+    storage: 20Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: truenas-nfs
+  nfs:
+    path: /mnt/pool/clickhouse-data
+    server: 192.168.1.21
+    ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clickhouse-pvc
+  namespace: monitoring
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi

@@ -1,0 +1,76 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+
+image:
+  registry: docker.io
+  repository: clickhouse/clickhouse-server
+  tag: 25.1.6
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+podManagementPolicy: OrderedReady
+
+persistence:
+  enabled: true
+  existingClaim: clickhouse-pvc
+
+service:
+  type: ClusterIP
+  httpPort: 8123
+  tcpPort: 9000
+  interserverHttpPort: 9009
+
+auth:
+  username: default
+  password: clickhouse
+  secretName: ""
+
+clickhouse:
+  configmap:
+    users.xml: |
+      <clickhouse>
+      <users>
+      <default>
+      <password>clickhouse</password>
+      <networks>
+      <ip>::/0</ip>
+      </networks>
+      <profile>default</profile>
+      <quota>default</quota>
+      <access_management>1</access_management>
+      </default>
+      </users>
+      </clickhouse>
+    config.xml: |
+      <clickhouse>
+      <logger>
+      <level>information</level>
+      <console>true</console>
+      </logger>
+      <display_name>clickhouse-cluster</display_name>
+      <http_port>8123</http_port>
+      <tcp_port>9000</tcp_port>
+      <interserver_http_port>9009</interserver_http_port>
+      <max_connections>4096</max_connections>
+      <keep_alive_timeout>10</keep_alive_timeout>
+      <max_concurrent_queries>100</max_concurrent_queries>
+      <uncompressed_cache_size>8589934592</uncompressed_cache_size>
+      <mark_cache_size>5368709120</mark_cache_size>
+      <path>/var/lib/clickhouse/</path>
+      <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+      <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+      <access_control_path>/var/lib/clickhouse/access/</access_control_path>
+      <builtin_dictionaries_reload_interval>3600</builtin_dictionaries_reload_interval>
+      </clickhouse>
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: clickhouse.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
