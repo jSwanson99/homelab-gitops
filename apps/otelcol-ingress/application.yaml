@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otelcol-ingress-config
+  namespace: monitoring
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+    
+    processors:
+      batch:
+        timeout: 2s
+        send_batch_size: 10000
+    
+    exporters:
+      clickhouse:
+        endpoint: http://clickhouse:8123
+        database: otel
+        timeout: 10s
+        logs_table_name: otel_logs
+        traces_table_name: otel_traces
+        metrics_table_name: otel_metrics
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
+      logging:
+        loglevel: debug
+    
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [clickhouse]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [clickhouse]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [clickhouse]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otelcol-ingress
+  namespace: monitoring
+  labels:
+    app: otelcol-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otelcol-ingress
+  template:
+    metadata:
+      labels:
+        app: otelcol-ingress
+    spec:
+      containers:
+      - name: otelcol-ingress
+        image: otel/opentelemetry-collector-contrib:0.120.0
+        ports:
+        - containerPort: 4317
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otelcol-ingress
+  namespace: monitoring
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.251
+  selector:
+    app: otelcol-ingress
+  ports:
+  - name: grpc
+    port: 4317
+    targetPort: 4317 
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: otelcol-ingress
+  namespace: argocd
+spec:
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps/otelcol-ingress
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
