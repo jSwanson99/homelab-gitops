@@ -21,6 +21,16 @@ spec:
         ports:
         - containerPort: 9000
         - containerPort: 8123
+        - name: CLICKHOUSE_USER
+          valueFrom:
+            secretKeyRef:
+              name: clickhouse-auth
+              key: username
+        - name: CLICKHOUSE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: clickhouse-auth
+              key: password
       volumeMounts:
       - name: clickhouse-data
         mountPath: /var/lib/clickhouse
