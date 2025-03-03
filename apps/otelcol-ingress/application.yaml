@@ -13,8 +13,9 @@ data:
     
     processors:
       batch:
-        timeout: 2s
+        timeout: 5s
         send_batch_size: 10000
+      cumulativetodelta: {}
     
     exporters:
       clickhouse:
@@ -41,7 +42,7 @@ data:
           exporters: [clickhouse, debug]
         metrics:
           receivers: [otlp]
-          processors: [batch]
+          processors: [batch, cumulativetodelta]
           exporters: [clickhouse, debug]
         logs:
           receivers: [otlp]
