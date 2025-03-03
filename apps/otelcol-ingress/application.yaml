@@ -18,7 +18,9 @@ data:
     
     exporters:
       clickhouse:
-        endpoint: http://clickhouse:8123
+        endpoint: "tcp://clickhouse:9000?username=admin&password=admin"
+        username: admin
+        password: admin
         database: otel
         timeout: 10s
         logs_table_name: otel_logs
@@ -29,23 +31,22 @@ data:
           initial_interval: 5s
           max_interval: 30s
           max_elapsed_time: 300s
-      logging:
-        loglevel: debug
+      debug: {}
     
     service:
       pipelines:
         traces:
           receivers: [otlp]
           processors: [batch]
-          exporters: [clickhouse]
+          exporters: [clickhouse, debug]
         metrics:
           receivers: [otlp]
           processors: [batch]
-          exporters: [clickhouse]
+          exporters: [clickhouse, debug]
         logs:
           receivers: [otlp]
           processors: [batch]
-          exporters: [clickhouse]
+          exporters: [clickhouse, debug]
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -64,9 +65,18 @@ spec:
       labels:
         app: otelcol-ingress
     spec:
+      volumes:
+      - name: otelcol-config
+        configMap:
+          name: otelcol-ingress-config
       containers:
       - name: otelcol-ingress
         image: otel/opentelemetry-collector-contrib:0.120.0
+        args:
+        - "--config=/etc/otelcol/config.yaml"
+        volumeMounts:
+        - name: otelcol-config
+          mountPath: /etc/otelcol
         ports:
         - containerPort: 4317
 ---
