@@ -18,6 +18,11 @@ data:
         timeout: 5s
         send_batch_size: 10000
       cumulativetodelta: {}
+      transform:
+        metric_statements:
+          - context: datapoint
+            statements:
+              - set(resource.attributes["service.name"], "pfsense") where datapoint.attributes["host"] == "pfsense.jds.net"
     
     exporters:
       clickhouse:
@@ -44,7 +49,7 @@ data:
           exporters: [clickhouse, debug]
         metrics:
           receivers: [influxdb, otlp]
-          processors: [batch, cumulativetodelta]
+          processors: [transform, cumulativetodelta, batch]
           exporters: [clickhouse, debug]
         logs:
           receivers: [otlp]
