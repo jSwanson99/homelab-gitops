@@ -10,6 +10,8 @@ data:
         protocols:
           grpc:
             endpoint: 0.0.0.0:4317
+      influxdb:
+        endpoint: 0.0.0.0:8086
     
     processors:
       batch:
@@ -41,7 +43,7 @@ data:
           processors: [batch]
           exporters: [clickhouse, debug]
         metrics:
-          receivers: [otlp]
+          receivers: [influxdb, otlp]
           processors: [batch, cumulativetodelta]
           exporters: [clickhouse, debug]
         logs:
@@ -95,6 +97,9 @@ spec:
   - name: grpc
     port: 4317
     targetPort: 4317 
+  - name: influxdb
+    port: 8086
+    targetPort: 8086
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
