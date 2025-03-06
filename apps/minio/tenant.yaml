@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio-tenant
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    path: apps/minio
+    targetRevision: master
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio-tenant
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: storage-configuration
+  namespace: minio-tenant
+type: Opaque
+stringData:
+  config.env: |-
+    export MINIO_ROOT_USER=minio
+    export MINIO_ROOT_PASSWORD=minio123
+    export MINIO_BROWSER=on
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio
+  namespace: minio-tenant
+spec:
+  pools:
+    - name: primary
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3002
+        fsGroup: 3002
+      servers: 1
+      volumesPerServer: 1
+      volumeClaimTemplate:
+        metadata:
+          name: minio-pvc
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
+          storageClassName: truenas-nfs
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+            - key: v1.min.io/tenant
+              operator: In
+              values:
+                - minio
+        topologyKey: kubernetes.io/hostname
+  configuration:
+    name: storage-configuration
+  requestAutoCert: true
