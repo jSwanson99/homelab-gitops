@@ -12,6 +12,55 @@ data:
             endpoint: 0.0.0.0:4317
       influxdb:
         endpoint: 0.0.0.0:8086
+      prometheus:
+        config:
+          scrape_configs:
+            # Cilium Agent metrics
+            - job_name: 'cilium-agent'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+                  action: keep
+                  regex: cilium
+                - source_labels: [__address__]
+                  action: replace
+                  regex: (.+):(\d+)
+                  replacement: ${1}:9962
+                  target_label: __address__
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: replace
+                  target_label: node
+            - job_name: 'envoy'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+                  action: keep
+                  regex: hubble
+                - source_labels: [__address__]
+                  action: replace
+                  regex: (.+):(\d+)
+                  replacement: ${1}:9964
+                  target_label: __address__
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: replace
+                  target_label: node
+            - job_name: 'hubble'
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+                  action: keep
+                  regex: hubble
+                - source_labels: [__address__]
+                  action: replace
+                  regex: (.+):(\d+)
+                  replacement: ${1}:9965
+                  target_label: __address__
+                - source_labels: [__meta_kubernetes_pod_node_name]
+                  action: replace
+                  target_label: node
     
     processors:
       batch:
