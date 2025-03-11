@@ -39,20 +39,11 @@ data:
     
     exporters:
       clickhouse:
-        endpoint: "tcp://clickhouse:9000?username=admin&password=admin"
+        endpoint: "tcp://clickhouse:9000"
         create_schema: true
         username: admin
         password: admin
         database: otel
-        timeout: 10s
-        logs_table_name: otel_logs
-        traces_table_name: otel_traces
-        metrics_table_name: otel_metrics
-        retry_on_failure:
-          enabled: true
-          initial_interval: 5s
-          max_interval: 30s
-          max_elapsed_time: 300s
       debug: {}
     
     service:
@@ -93,7 +84,7 @@ spec:
           name: otelcol-ingress-config
       containers:
       - name: otelcol-ingress
-        image: otel/opentelemetry-collector-contrib:0.120.0
+        image: otel/opentelemetry-collector-contrib:0.121.0
         args:
         - "--config=/etc/otelcol/config.yaml"
         volumeMounts:
