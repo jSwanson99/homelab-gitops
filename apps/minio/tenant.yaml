@@ -43,6 +43,10 @@ metadata:
   name: minio
   namespace: minio-tenant
 spec:
+  console:
+    serviceMetadata:
+      consoleServiceAnnotations:
+        metallb.universe.tf/loadBalancerIPs: "192.168.1.249"  
   exposeServices:
     minio: true
     console: true
