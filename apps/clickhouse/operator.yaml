@@ -7,7 +7,7 @@ spec:
   project: default
   destination:
     server: https://kubernetes.default.svc
-    namespace: monitoring
+    namespace: clickhouse
   source:
     repoURL: https://docs.altinity.com/clickhouse-operator/
     chart: altinity-clickhouse-operator
