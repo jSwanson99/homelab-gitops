@@ -16,8 +16,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
 ---
 apiVersion: clickhouse.altinity.com/v1
 kind: ClickHouseInstallation
@@ -28,8 +26,6 @@ spec:
   defaults:
     templates:
       podTemplate: clickhouse-template
-      dataVolumeClaimTemplate: clickhouse-vc
-      logVolumeClaimTemplate: clickhouse-vc
   
   configuration:
     clusters:
@@ -52,23 +48,21 @@ spec:
                 limits:
                   memory: 2Gi
                   cpu: 1000m
+              volumeMounts:
+                - name: clickhouse-pvc
+                  mountPath: /var/lib/clickhouse
 
-    volumeClaimTemplates:
+    volumes:
       - name: clickhouse-vc
         persistentVolumeClaim:
           claimName: clickhouse-pvc
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          storageClassName: truenas-nfs
-          resources:
-            requests:
-              storage: 20Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: clickhouse-pv
+  labels:
+    app: clickhouse-storage
 spec:
   capacity:
     storage: 20Gi
@@ -80,3 +74,17 @@ spec:
   nfs:
     path: /mnt/pool/clickhouse-data
     server: 192.168.1.21
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clickhouse-pvc
+  namespace: clickhouse
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeName: clickhouse-pv 
