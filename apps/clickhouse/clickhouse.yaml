@@ -22,12 +22,18 @@ kind: ClickHouseInstallation
 metadata:
   name: clickhouse
   namespace: clickhouse
+  finalizers:
+    - finalizer.clickhouseinstallation.altinity.com
 spec:
   defaults:
     templates:
       podTemplate: clickhouse-template
   
   configuration:
+    settings:
+      http_port: 8124
+      tcp_port: 9001
+      interserver_http_port: 9010
     clusters:
       - name: default
         layout:
@@ -48,14 +54,38 @@ spec:
                 limits:
                   memory: 2Gi
                   cpu: 1000m
+              ports:
+                - name: http
+                  containerPort: 8124
+                - name: tcp
+                  containerPort: 9001
+                - name: interserver
+                  containerPort: 9010
               volumeMounts:
-                - name: clickhouse-pvc
+                - name: data-storage-vc-template
                   mountPath: /var/lib/clickhouse
+                - name: log-storage-vc-template
+                  mountPath: /var/log/clickhouse-server
 
-    volumes:
-      - name: clickhouse-vc
-        persistentVolumeClaim:
-          claimName: clickhouse-pvc
+    volumeClaimTemplates:
+      - name: data-storage-vc-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 3Gi
+          volumeName: clickhouse-pv 
+          storageclassname: truenas-nfs
+      - name: log-storage-vc-template
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 2Gi
+          volumeName: clickhouse-pv 
+          storageclassname: truenas-nfs
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -74,17 +104,3 @@ spec:
   nfs:
     path: /mnt/pool/clickhouse-data
     server: 192.168.1.21
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: clickhouse-pvc
-  namespace: clickhouse
-spec:
-  storageClassName: truenas-nfs
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
-  volumeName: clickhouse-pv 
