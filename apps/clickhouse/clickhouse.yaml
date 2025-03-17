@@ -57,6 +57,13 @@ spec:
       - name: clickhouse-vc
         persistentVolumeClaim:
           claimName: clickhouse-pvc
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          storageClassName: truenas-nfs
+          resources:
+            requests:
+              storage: 20Gi
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -73,16 +80,3 @@ spec:
   nfs:
     path: /mnt/pool/clickhouse-data
     server: 192.168.1.21
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: clickhouse-pvc
-  namespace: clickhouse
-spec:
-  storageClassName: truenas-nfs
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
