@@ -17,18 +17,13 @@ spec:
         nfs:
           server: 192.168.1.21
           path: /mnt/pool
+        storageClass:
+          name: truenas-nfs
+          defaultClass: false
+          reclaimPolicy: Retain
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: truenas-nfs
-# provisioner: cluster.local/nfs-subdir-external-provisioner 
-provisioner: kubernetes.io/nfs
-parameters:
-  archiveOnDelete: "false"
