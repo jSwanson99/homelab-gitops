@@ -43,7 +43,6 @@ data:
         create_schema: true
         username: admin
         password: admin
-        database: otel
       debug: {}
     
     service:
