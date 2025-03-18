@@ -1,98 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickhouse
+  namespace: monitoring
+  labels:
+    app: clickhouse
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clickhouse
+  template:
+    metadata:
+      labels:
+        app: clickhouse
+    spec:
+      containers:
+      - name: clickhouse
+        image: clickhouse/clickhouse-server:25.1.5
+        ports:
+        - containerPort: 9000
+        - containerPort: 8123
+        env:
+        - name: CLICKHOUSE_USER
+          value: admin
+        - name: CLICKHOUSE_PASSWORD
+          value: admin
+      volumeMounts:
+      - name: clickhouse-data
+        mountPath: /var/lib/clickhouse
+    volumes:
+      - name: clickhouse-data
+        persistentVolumeClaim:
+          claimName: clickhouse-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clickhouse
+  namespace: monitoring
+spec:
+  selector:
+    app: clickhouse
+  ports:
+  - name: client
+    port: 9000
+    targetPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  name: clickhouse-ui
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.250
+  selector:
+    app: clickhouse
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8123
+---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: clickhouse
   namespace: argocd
 spec:
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
   project: default
   source:
     path: apps/clickhouse
     repoURL: https://github.com/jSwanson99/homelab-gitops.git
     targetRevision: master
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: clickhouse
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
----
-apiVersion: clickhouse.altinity.com/v1
-kind: ClickHouseInstallation
-metadata:
-  name: clickhouse
-  namespace: clickhouse
-  finalizers:
-    - finalizer.clickhouseinstallation.altinity.com
-spec:
-  defaults:
-    templates:
-      podTemplate: clickhouse-template
-  
-  configuration:
-    settings:
-      http_port: 8124
-      tcp_port: 9001
-      interserver_http_port: 9010
-    clusters:
-      - name: default
-        layout:
-          shardsCount: 1
-          replicasCount: 1
-  
-  templates:
-    podTemplates:
-      - name: clickhouse-template
-        spec:
-          containers:
-            - name: clickhouse
-              image: clickhouse/clickhouse-server:23.8
-              resources:
-                requests:
-                  memory: 2Gi
-                  cpu: 500m
-                limits:
-                  memory: 2Gi
-                  cpu: 1000m
-              ports:
-                - name: http
-                  containerPort: 8124
-                - name: tcp
-                  containerPort: 9001
-                - name: interserver
-                  containerPort: 9010
-              volumeMounts:
-                - name: data-storage-vc-template
-                  mountPath: /var/lib/clickhouse
-                - name: log-storage-vc-template
-                  mountPath: /var/log/clickhouse-server
-
-    volumeClaimTemplates:
-      - name: data-storage-vc-template
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 3Gi
-          volumeName: clickhouse-pv 
-          storageclassname: truenas-nfs
-      - name: log-storage-vc-template
-        spec:
-          accessModes:
-            - ReadWriteOnce
-          resources:
-            requests:
-              storage: 2Gi
-          volumeName: clickhouse-pv 
-          storageclassname: truenas-nfs
+    syncOptions:
+    - CreateNamespace=true
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: clickhouse-pv
-  labels:
-    app: clickhouse-storage
+  namespace: monitoring
 spec:
   capacity:
     storage: 20Gi
@@ -104,3 +99,16 @@ spec:
   nfs:
     path: /mnt/pool/clickhouse-data
     server: 192.168.1.21
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: clickhouse-pvc
+  namespace: monitoring
+spec:
+  storageClassName: truenas-nfs
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
