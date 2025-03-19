@@ -15,6 +15,10 @@ spec:
       labels:
         app: clickhouse
     spec:
+      securityContext:
+        runAsUser: 1100
+        runAsGroup: 1100
+        fsGroup: 1100
       containers:
       - name: clickhouse
         image: clickhouse/clickhouse-server:25.1.5
