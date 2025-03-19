@@ -6,10 +6,17 @@ metadata:
   argocd.argoproj.io/sync-wave: "-1"
 spec:
   project: default
-  source:
-    chart: opentelemetry-kube-stack
+  sources:
+  - chart: opentelemetry-kube-stack
     repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
     targetRevision: 0.4.4
+    helm:
+      valueFiles:
+        - $values/apps/otelcol-ingress/values.yaml
+  - path: apps/otelcol-ingress
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
