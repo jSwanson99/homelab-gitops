@@ -6,7 +6,7 @@ metadata:
   argocd.argoproj.io/sync-wave: "-1"
 spec:
   project: default
-  sources:
+  source:
     chart: opentelemetry-kube-stack
     repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
     targetRevision: 0.4.4
