@@ -26,9 +26,9 @@ spec:
           value: admin
         - name: CLICKHOUSE_PASSWORD
           value: admin
-      volumeMounts:
-      - name: clickhouse-data
-        mountPath: /var/lib/clickhouse
+        volumeMounts:
+        - name: clickhouse-data
+          mountPath: /var/lib/clickhouse
     volumes:
       - name: clickhouse-data
         persistentVolumeClaim:
