@@ -1,14 +1,8 @@
-# Top level field indicating an override for fullname
 fullnameOverride: ""
-# Top level field indicating an override for the namespace
 namespaceOverride: ""
-
-# Top level field specifying the name of the cluster
 clusterName: ""
-
 # Extra environment variables to add to each collector, bridge and instrumentation
 extraEnvs: []
-
 # Enables a cleanup job to make sure the CRs are uninstalled before the operator
 cleanupJob:
   # It is recommended to always keep this enabled so that running helm uninstall works properly.
@@ -22,22 +16,15 @@ cleanupJob:
     # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
     digest: ""
 
-# Should the CRDs be installed by this chart.
 crds:
-  # Should the CRDs be installed
   install: true
 
-# Top level field related to the OpenTelemetry Operator
 opentelemetry-operator:
-  # Field indicating whether the operator is enabled or not
   enabled: true
   manager:
     collectorImage:
       repository: otel/opentelemetry-collector-k8s
-  # Sub-field for admission webhooks configuration
   admissionWebhooks:
-    # Policy for handling failures
-    # Setting this allows for an installation of the otel operator at the same time as the custom resources it manages.
     failurePolicy: "Ignore"
 
   # This is disabled by default, as doing so creates a race condition with helm.
@@ -54,13 +41,8 @@ opentelemetry-operator:
 defaultCRConfig:
   enabled: false
 
-  # Suffix for the collector pool, by default the release name is prepended
   suffix: "collector"
-
-  # fullnameOverride allows overriding the collector's name
   fullnameOverride: ""
-
-  # Annotations for the collector
   annotations: {}
   #   io.opentelemetry.com/resource: hello
 
@@ -73,11 +55,7 @@ defaultCRConfig:
   # coming from the prometheus ecosystem by allowing users to simply copy and paste
   # directly from prometheus into this file to use the same config.
   scrape_configs_file: ""
-
-  # Management state of the collector
   managementState: managed
-
-  # Configuration for cluster role binding
   clusterRoleBinding:
     enabled: true
     clusterRoleName: ""
@@ -510,6 +488,7 @@ collectors:
               - batch
             exporters:
               - debug
+              - otlp
           metrics:
             receivers:
               - otlp
@@ -518,6 +497,7 @@ collectors:
               - batch
             exporters:
               - debug
+              - otlp
           logs:
             receivers:
               - otlp
@@ -526,6 +506,7 @@ collectors:
               - batch
             exporters:
               - debug
+              - otlp
   cluster:
     suffix: cluster-stats
     replicas: 1
