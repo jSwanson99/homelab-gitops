@@ -1,24 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: minio-tenant
+  name: otelcol-ingress
   namespace: argocd
-  argocd.argoproj.io/sync-wave: "2"
 spec:
+  destination:
+    namespace: monitoring
+    server: https://kubernetes.default.svc
   project: default
   source:
+    path: config/otelcol
     repoURL: https://github.com/jSwanson99/homelab-gitops.git
-    path: config/minio
     targetRevision: master
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: minio-tenant
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
-  dependsOn:
-  - name: minio-operator
-    namespace: argocd
