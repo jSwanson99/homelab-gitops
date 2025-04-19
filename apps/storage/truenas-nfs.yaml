@@ -3,10 +3,12 @@ kind: Application
 metadata:
   name: nfs-provisioner
   namespace: argocd
-  argocd.argoproj.io/sync-wave: "1"
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/destination-namespace: "storage"
 spec:
   destination:
-    namespace: storage  # Changed to a dedicated namespace
+    namespace: storage
     server: https://kubernetes.default.svc
   project: default
   source:

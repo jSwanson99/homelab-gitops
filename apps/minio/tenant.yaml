@@ -5,6 +5,7 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/destination-namespace: "minio-tenant"
 spec:
   project: default
   source:
