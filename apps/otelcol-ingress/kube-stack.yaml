@@ -14,8 +14,8 @@ spec:
     targetRevision: 0.4.4
     helm:
       valueFiles:
-        - $values/apps/otelcol-ingress/values.yaml
-  - path: apps/otelcol-ingress
+        - $values/config/otelcol/values.yaml
+  - path: config/otelcol
     ref: values
     repoURL: https://github.com/jSwanson99/homelab-gitops.git
     targetRevision: master
