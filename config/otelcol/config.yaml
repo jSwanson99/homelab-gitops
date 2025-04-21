@@ -34,9 +34,8 @@ data:
                   regex: 9964
     
     processors:
-      batch:
-        timeout: 5s
-        send_batch_size: 10000
+      logdedup: {}
+      batch: {}
       cumulativetodelta: {}
       transform:
         metric_statements:
@@ -55,7 +54,7 @@ data:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [batch]
+          processors: [logdedup, batch]
           exporters: [clickhouse]
         metrics:
           receivers: [influxdb, otlp]
