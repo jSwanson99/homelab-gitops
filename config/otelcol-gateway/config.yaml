@@ -54,7 +54,7 @@ data:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [logdedup, batch]
+          processors: [batch]
           exporters: [clickhouse]
         metrics:
           receivers: [influxdb, otlp]
@@ -62,5 +62,5 @@ data:
           exporters: [clickhouse]
         logs:
           receivers: [otlp]
-          processors: [batch]
+          processors: [logdedup, batch]
           exporters: [clickhouse]

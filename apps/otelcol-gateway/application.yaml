@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: otelcol-ingress
+  name: otelcol-gateway
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "3"
@@ -12,7 +12,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: config/otelcol
+    path: config/otelcol-gateway
     repoURL: https://github.com/jSwanson99/homelab-gitops.git
     targetRevision: master
   syncPolicy:

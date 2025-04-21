@@ -14,8 +14,8 @@ spec:
     targetRevision: 0.4.4
     helm:
       valueFiles:
-        - $values/config/otelcol/values.yaml
-  - path: config/otelcol
+        - $values/config/otelcol-kubestack/values.yaml
+  - path: config/otelcol-kubestack
     ref: values
     repoURL: https://github.com/jSwanson99/homelab-gitops.git
     targetRevision: master
