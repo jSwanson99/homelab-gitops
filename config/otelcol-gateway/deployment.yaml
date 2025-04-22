@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: otelcol-ingress
+  name: otelcol-gateway
   namespace: monitoring
   labels:
-    app: otelcol-ingress
+    app: otelcol-gateway
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: otelcol-ingress
+      app: otelcol-gateway
   template:
     metadata:
       labels:
-        app: otelcol-ingress
+        app: otelcol-gateway
     spec:
       volumes:
       - name: otelcol-config
         configMap:
-          name: otelcol-ingress-config
+          name: otelcol-gateway-config
       containers:
-      - name: otelcol-ingress
+      - name: otelcol-gateway
         image: otel/opentelemetry-collector-contrib:0.121.0
         args:
         - "--config=/etc/otelcol/config.yaml"

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: otelcol-ingress-config
+  name: otelcol-gateway-config
   namespace: monitoring
 data:
   config.yaml: |
