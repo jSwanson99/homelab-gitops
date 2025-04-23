@@ -12,6 +12,8 @@ data:
             endpoint: 0.0.0.0:4317
       influxdb:
         endpoint: 0.0.0.0:8086
+      zipkin:
+        endpoint: 0.0.0.0:9411
       prometheus:
         config:
           scrape_configs:
@@ -53,7 +55,7 @@ data:
     service:
       pipelines:
         traces:
-          receivers: [otlp]
+          receivers: [zipkin, otlp]
           processors: [batch]
           exporters: [clickhouse]
         metrics:

@@ -15,3 +15,6 @@ spec:
   - name: influxdb
     port: 8086
     targetPort: 8086
+  - name: zipkin 
+    port: 9411
+    targetPort: 9411 
