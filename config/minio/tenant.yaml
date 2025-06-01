@@ -9,7 +9,6 @@ stringData:
     export MINIO_ROOT_USER=minio
     export MINIO_ROOT_PASSWORD=minio123
     export MINIO_BROWSER=on
-
 ---
 apiVersion: minio.min.io/v2
 kind: Tenant
@@ -42,7 +41,6 @@ spec:
             requests:
               storage: 20Gi
           storageClassName: truenas-nfs
-          volumeName: minio-pv
   podAntiAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       - labelSelector:
