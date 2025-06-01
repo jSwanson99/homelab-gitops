@@ -18,7 +18,7 @@ persistence:
   existingClaim: grafana-pvc
   
 initChownData:
-  enabled: true
+  enabled: false
   securityContext:
     runAsUser: 472
     runAsGroup: 472
