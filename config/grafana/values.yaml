@@ -15,7 +15,7 @@ adminPassword: admin
 
 persistence:
   enabled: true
-  existingClaim: grafana-pvc
+  storageClassName: truenas-nfs
   
 initChownData:
   enabled: false
