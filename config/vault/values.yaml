@@ -3,7 +3,7 @@ server:
     enabled: true
     size: 10Gi
     mountPath: "/vault/data"
-    storageClass: "nfs-vault"
+    storageClass: "truenas-nfs"
     accessMode: ReadWriteOnce
   dev:
     enabled: true
