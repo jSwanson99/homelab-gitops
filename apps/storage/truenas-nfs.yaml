@@ -18,11 +18,11 @@ spec:
     helm:
       values: |
         nfs:
-          server: 192.168.1.21
-          path: /mnt/pool
+          server: nas.jds.net
+          path: /mnt/data/k8s
         storageClass:
           name: truenas-nfs
-          defaultClass: false
+          defaultClass: true
           reclaimPolicy: Retain
   syncPolicy:
     automated:
