@@ -27,3 +27,7 @@ securityContext:
   runAsUser: 472
   runAsGroup: 472
   fsGroup: 472
+
+env:
+  GF_FEATURE_TOGGLES_ENABLE: "dashboardScene,dashboardNewLayouts,kubernetesDashboards"
+  GF_PLUGINS_PREINSTALL: "grafana-clickhouse-datasource"
