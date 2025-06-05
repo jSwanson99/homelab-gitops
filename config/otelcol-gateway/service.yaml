@@ -18,3 +18,7 @@ spec:
   - name: zipkin 
     port: 9411
     targetPort: 9411 
+  - name: syslog
+    port: 1514
+    targetPort: 1514 
+    protocol: UDP

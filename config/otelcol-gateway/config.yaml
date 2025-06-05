@@ -14,6 +14,11 @@ data:
         endpoint: 0.0.0.0:8086
       zipkin:
         endpoint: 0.0.0.0:9411
+      syslog:
+        udp:
+          listen_address: "0.0.0.0:1514"
+          add_attributes: true
+        protocol: rfc5424
       prometheus:
         config:
           scrape_configs:
@@ -63,6 +68,6 @@ data:
           processors: [transform, cumulativetodelta, batch]
           exporters: [clickhouse]
         logs:
-          receivers: [otlp]
+          receivers: [otlp, syslog]
           processors: [logdedup, batch]
           exporters: [clickhouse]
