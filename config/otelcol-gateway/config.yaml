@@ -42,7 +42,9 @@ data:
 
     processors:
       logdedup: {}
-      batch: {}
+      batch:
+        send_batch_size: 8192
+        timeout: 5s
       cumulativetodelta: {}
       transform:
         metric_statements:
@@ -56,10 +58,17 @@ data:
 
     exporters:
       clickhouse:
-        endpoint: "tcp://clickhouse:9000"
+        endpoint: "tcp://clickhouse:9000?compress=lz4&async_insert=1"
         create_schema: true
         username: admin
         password: admin
+        sending_queue:
+          queue_size: 1000
+        retry_on_failure:
+          enabled: true
+          initial_interval: 5s
+          max_interval: 30s
+          max_elapsed_time: 300s
 
     service:
       pipelines:
