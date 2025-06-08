@@ -21,7 +21,7 @@ spec:
           name: otelcol-gateway-config
       containers:
       - name: otelcol-gateway
-        image: otel/opentelemetry-collector-contrib:0.121.0
+        image: otel/opentelemetry-collector-contrib:0.127.0
         args:
         - "--config=/etc/otelcol/config.yaml"
         volumeMounts:

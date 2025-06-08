@@ -39,7 +39,7 @@ data:
                 - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
                   action: keep
                   regex: 9964
-    
+
     processors:
       logdedup: {}
       batch: {}
@@ -49,19 +49,23 @@ data:
           - context: datapoint
             statements:
               - set(resource.attributes["service.name"], datapoint.attributes["host"]) where resource.attributes["service.name"] == nil
-    
+        log_statements:
+          - statements:
+              - set(resource.attributes["service.name"], log.attributes["hostname"]) where resource.attributes["service.name"] == nil
+              - set(log.body, Trim(log.attributes["message"])) where resource.attributes["service.name"] == "vyos"
+
     exporters:
       clickhouse:
         endpoint: "tcp://clickhouse:9000"
         create_schema: true
         username: admin
         password: admin
-    
+
     service:
       pipelines:
         traces:
           receivers: [zipkin, otlp]
-          processors: [batch]
+          processors: [transform, batch]
           exporters: [clickhouse]
         metrics:
           receivers: [influxdb, otlp]
@@ -69,5 +73,5 @@ data:
           exporters: [clickhouse]
         logs:
           receivers: [otlp, syslog]
-          processors: [logdedup, batch]
+          processors: [transform, logdedup, batch]
           exporters: [clickhouse]
