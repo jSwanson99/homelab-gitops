@@ -55,6 +55,9 @@ data:
           - statements:
               - set(resource.attributes["service.name"], log.attributes["hostname"]) where resource.attributes["service.name"] == nil
               - set(log.body, Trim(log.attributes["message"])) where resource.attributes["service.name"] == "vyos"
+              - set(log.cache["msg"], log.body) where resource.attributes["service.name"] == "coredns"
+              - set(log.body, log.cache["msg"]["MESSAGE"]) where resource.attributes["service.name"] == "coredns"
+              - set(log.attributes, ExtractPatterns(log.body, "\\[(?P<level>\\S+)\\] (?P<client_ip>[^:]+):(?P<client_port>\\d+) - (?P<query_id>\\S+) \"(?P<type>\\S+) (?P<direction>\\S+) (?P<name>\\S+) (?P<protocol>\\S+) (?P<request_size>\\d+) (?P<dnssec_ok>\\S+) (?P<bufsize>\\d+)\" (?P<rcode>\\S+) (?P<flags>[^\\s]+) (?P<response_size>\\d+) (?P<duration_seconds>[\\d\\.]+s)")) where resource.attributes["service.name"] == "coredns"
 
     exporters:
       clickhouse:
