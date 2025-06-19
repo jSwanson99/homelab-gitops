@@ -15,6 +15,13 @@ spec:
   - repoURL: https://github.com/jSwanson99/helm.git
     targetRevision: master
     path: ./charts/ollyman
+    helm:
+      valueFiles:
+        - $values/config/ollyman/values.yaml
+  - path: config/ollyman
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
