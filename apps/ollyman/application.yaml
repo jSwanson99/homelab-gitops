@@ -5,10 +5,10 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "3"
-    argocd.argoproj.io/destination-namespace: "monitoring2"
+    argocd.argoproj.io/destination-namespace: "monitoring"
 spec:
   destination:
-    namespace: monitoring2
+    namespace: monitoring
     server: https://kubernetes.default.svc
   project: default
   sources:
