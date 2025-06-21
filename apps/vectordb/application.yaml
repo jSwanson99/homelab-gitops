@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chromadb
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/destination-namespace: "devtools"
+spec:
+  destination:
+    namespace: devtools
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: charts/chromadb-chart
+    repoURL: https://github.com/amikos-tech/chromadb-chart
+    targetRevision: main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
