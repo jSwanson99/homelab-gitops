@@ -24,6 +24,7 @@ spec:
           name: truenas-nfs
           defaultClass: true
           reclaimPolicy: Retain
+          pathPattern: "${.PVC.namespace}/${.PVC.name}" 
   syncPolicy:
     automated:
       prune: true
