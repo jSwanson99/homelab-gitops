@@ -11,10 +11,17 @@ spec:
     namespace: devtools
     server: https://kubernetes.default.svc
   project: default
-  source:
-    path: charts/chromadb-chart
-    repoURL: https://github.com/amikos-tech/chromadb-chart
-    targetRevision: main
+  sources:
+  - chart: chromadb
+    repoURL: https://amikos-tech.github.io/chromadb-chart
+    targetRevision: 0.1.24
+    helm:
+      valueFiles:
+        - $values/config/vectordb/values.yaml
+  - path: config/vectordb
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
   syncPolicy:
     automated:
       prune: true
