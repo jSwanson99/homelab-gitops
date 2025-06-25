@@ -6,3 +6,7 @@ chromadb:
   persistDirectory: /data
   data:
     storageClass: truenas-nfs
+  telemetry:
+    enabled: true
+    serviceName: ChromaDB
+    endpoint: grpc://otelcol.jds.net:4317
