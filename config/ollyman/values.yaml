@@ -19,7 +19,6 @@ opentelemetry-kube-stack:
     annotations: {}
     rules: []
 
-  # {{{ Otel Operator
   opentelemetry-operator:
     enabled: true
     manager:
@@ -29,9 +28,7 @@ opentelemetry-kube-stack:
       failurePolicy: "Ignore"
     crds:
       create: false
-  # }}}
 
-  # {{{ Collector Base Config
   defaultCRConfig:
     enabled: false
     suffix: "collector"
@@ -128,14 +125,16 @@ opentelemetry-kube-stack:
         enabled: false
       clusterMetrics:
         enabled: false
-  # }}}
 
   collectors:
-    # {{{ Daemonset - logs, kubelet metrics, pod logs, k8s attrs
     daemon: 
       suffix: daemon
       mode: daemonset
       enabled: true
+      tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
       resources:
         limits:
           cpu: 200m
@@ -153,7 +152,7 @@ opentelemetry-kube-stack:
         kubeletMetrics:
           enabled: true
         hostMetrics:
-          enabled: true
+          enabled: false
         kubernetesAttributes:
           enabled: true
       config:
@@ -255,9 +254,7 @@ opentelemetry-kube-stack:
               receivers: [k8sobjects]
               processors: [resourcedetection/env, batch]
               exporters: [otlp]
-  # }}}
 
-  # {{{ Code Instrumentation
   instrumentation:
     enabled: false
     labels: {}
@@ -287,8 +284,6 @@ opentelemetry-kube-stack:
     go: {}
     apacheHttpd: {}
     nginx: {}
-  # }}}
-  # {{{ opAMP
   opAMPBridge:
     enabled: false
     addReportingLabel: true
@@ -346,11 +341,9 @@ opentelemetry-kube-stack:
       enabled: true
       annotations: {}
       rules: []
-  # }}}
   kubernetesServiceMonitors:
     enabled: false
     ignoreNamespaceSelectors: false
-  ## {{{ k8s api server
   kubeApiServer:
     enabled: false
     tlsConfig:
@@ -378,8 +371,6 @@ opentelemetry-kube-stack:
             - le
       relabelings: []
       additionalLabels: {}
-  # }}}
-  # {{{ Kubelet
   kubelet:
     enabled: false
     namespace: kube-system
@@ -390,8 +381,6 @@ opentelemetry-kube-stack:
       https: true
       cAdvisor: true
       probes: true
-  # }}}
-  ## {{{ kubeControllerManager
   kubeControllerManager:
     enabled: false
     endpoints: []
@@ -418,8 +407,6 @@ opentelemetry-kube-stack:
       metricRelabelings: []
       relabelings: []
       additionalLabels: {}
-  # }}}
-  # {{{ CoreDNS
   coreDns:
     enabled: false
     endpoints: []
@@ -442,8 +429,6 @@ opentelemetry-kube-stack:
       metricRelabelings: []
       relabelings: []
       additionalLabels: {}
-  # }}}
-  # {{{ KubeDNS
   kubeDns:
     enabled: false
     service:
@@ -468,8 +453,6 @@ opentelemetry-kube-stack:
       dnsmasqMetricRelabelings: []
       dnsmasqRelabelings: []
       additionalLabels: {}
-  # }}}
-  # {{{ Etcd
   kubeEtcd:
     enabled: false
     ## If your etcd is not deployed as a pod, specify IPs it can be found on
@@ -499,8 +482,6 @@ opentelemetry-kube-stack:
       metricRelabelings: []
       relabelings: []
       additionalLabels: {}
-  # }}}
-  # {{{ Kube Scheduler
   kubeScheduler:
     enabled: false
     endpoints: []
@@ -527,8 +508,6 @@ opentelemetry-kube-stack:
       metricRelabelings: []
       relabelings: []
       additionalLabels: {}
-  # }}}
-  # {{{ KubeProxy - Disabled used with cilium
   kubeProxy:
     enabled: false
     endpoints: []
@@ -556,8 +535,7 @@ opentelemetry-kube-stack:
 
   kubeStateMetrics:
     enabled: false
-  ## {{{ Kube State Metrics
-  ## https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-state-metrics
+
   kube-state-metrics:
     namespaceOverride: ""
     rbac:
@@ -579,18 +557,10 @@ opentelemetry-kube-stack:
         relabelings: []
     selfMonitor:
       enabled: false
-  # }}}
 
-  ##  {{{ Node Exporter
-  ## Controls whether the prometheus-node-exporter chart should be created.
-  ## This block matches the configuration for the kube-prometheus-stack chart for compatibility.
   nodeExporter:
     enabled: false
 
-  ## Configuration for prometheus-node-exporter subchart
-  ## This will install a daemonset that pulls metric data from each node
-  ## Read more here about the chart:
-  ## https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter
   prometheus-node-exporter:
     namespaceOverride: ""
     podLabels:
