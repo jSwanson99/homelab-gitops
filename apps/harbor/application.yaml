@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/destination-namespace: "kube-system-ancillary"
+spec:
+  destination:
+    namespace: kube-system-ancillary
+    server: https://kubernetes.default.svc
+  project: default
+  sources:
+  - chart: harbor
+    repoURL:  https://helm.goharbor.io
+    targetRevision: 1.17.1
+    helm:
+      valueFiles:
+        - $values/config/harbor/values.yaml
+  - path: config/harbor
+    ref: values
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

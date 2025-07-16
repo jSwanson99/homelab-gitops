@@ -1,0 +1,5 @@
+expose:
+  type: loadBalancer
+  tls:
+    enabled: false
+externalURL: http://harbor.jds.net
