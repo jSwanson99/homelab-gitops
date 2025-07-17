@@ -1,0 +1,27 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: cilium
+spec:
+  gatewayClassName: cilium
+  addresses:
+  - type: IPAddress
+    value: 192.168.1.237
+  listeners:
+  - protocol: HTTP
+    port: 80
+    name: http
+    allowedRoutes:
+      namespaces:
+        from: All
+
+  - protocol: HTTPS
+    port: 443
+    name: https
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: cluster-issuer-keypair
+    allowedRoutes:
+      namespaces:
+        from: All
