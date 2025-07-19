@@ -8,6 +8,7 @@ spec:
   parentRefs:
   - name: cilium
     namespace: default
+    sectionName: https
   hostnames:
   - grafana.jds.net
   rules:
@@ -28,6 +29,7 @@ spec:
   parentRefs:
   - name: cilium
     namespace: default
+    sectionName: https
   hostnames:
   - clickhouse.jds.net
   rules:
@@ -48,6 +50,7 @@ spec:
   parentRefs:
   - name: cilium
     namespace: default
+    sectionName: https
   hostnames:
   - clickhouse-mcp.jds.net
   rules:
