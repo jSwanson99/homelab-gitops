@@ -156,6 +156,10 @@ opentelemetry-kube-stack:
           enabled: false
         kubernetesAttributes:
           enabled: true
+        kubernetesEvents:
+          enabled: true
+        clusterMetrics:
+          enabled: true
       config:
         receivers:
           otlp:
