@@ -1,8 +1,0 @@
-expose:
-  type: clusterIP
-  tls:
-    enabled: false
-  clusterIP:
-    name: harbor
-
-externalURL: http://harbor.jds.net
