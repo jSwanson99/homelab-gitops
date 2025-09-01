@@ -1,0 +1,50 @@
+apiVersion: v1
+data:
+  log.conf: |+
+    version: 1
+    disable_existing_loggers: false
+    formatters:
+      precise:
+        format: '%(asctime)s - %(name)s - %(lineno)d - %(levelname)s - %(request)s - %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: precise
+    loggers:
+        _placeholder:
+            level: "INFO"
+        synapse.storage.SQL:
+            # beware: increasing this to DEBUG will make synapse log sensitive
+            # information such as access tokens.
+            level: INFO
+    root:
+        level: INFO
+        handlers: [console] # stderr
+
+  homeserver.yaml: |+
+    server_name: "jdsmatrix"
+    pid_file: /data/homeserver.pid
+    listeners:
+      - port: 8008
+        tls: false
+        type: http
+        x_forwarded: true
+        resources:
+          - names: [client, federation]
+            compress: false
+    database:
+      name: sqlite3 # Maybe try PG later!
+      args:
+        database: /data/homeserver.db
+    log_config: /data/jdsmatrix.log.config
+    media_store_path: /data/media_store
+    signing_key_path: /data/jdsmatrix.signing.key
+    report_stats: false
+
+    registration_shared_secret: "f5cf033dd8935a0f41a46b73c1a3cc36528b21e61c0d79a397ca7e237b09380f"
+    macaroon_secret_key: "e32398ba533e71526e3a849839cb84862d0d725b5e71043e265121b506169fa4"
+    form_secret: "cwC7yENYhnf@r,,UwU1mfu0xLCYE*EX@.6NhXU;.ulU=6BI&,X"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: matrix-cm

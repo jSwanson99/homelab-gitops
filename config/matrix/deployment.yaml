@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: matrix
+  name: matrix
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: matrix
+    spec:
+      containers:
+      - image: matrixdotorg/synapse:sha-40edb10
+        name: synapse
+        ports:
+        - containerPort: 8008
+        resources: {}
+        volumeMounts:
+        - name: data-dir
+          mountPath: /data
+
+        - name: config
+          mountPath: /data/jdsmatrix.log.config
+          subPath: log.conf
+
+        - name: config
+          mountPath: /data/homeserver.yaml
+          subPath: homeserver.yaml
+      volumes:
+      - name: config
+        configMap:
+          name: matrix-cm
+      - name: data-dir
+        persistentVolumeClaim:
+          claimName: matrix-pvc
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: element
+  name: element
+  namespace: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: element
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: element
+    spec:
+      containers:
+      - image: vectorim/element-web:v1.11.109
+        name: element-web
+        ports:
+        - containerPort: 8080
+          name: element
+          protocol: TCP
+        readinessProbe:
+            httpGet:
+                path: /
+                port: element
+            initialDelaySeconds: 2
+            periodSeconds: 3
+        livenessProbe:
+            httpGet:
+                path: /
+                port: element
+            initialDelaySeconds: 10
+            periodSeconds: 10
+        resources: {}
+        volumeMounts:
+        - name: config
+          mountPath: /app/config.element.jds.net.json
+          subPath: config.json
+        env:
+        - name: ELEMENT_WEB_PORT
+          value: "8080"
+      volumes:
+      - name: config
+        configMap:
+          name: element-config
+status: {}
